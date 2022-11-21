@@ -1,0 +1,31 @@
+{
+  "name": "aestesis.3.0",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "serve": "serve",
+    "build": "rollup -c -w src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aestesis/aestesis.3.0.git"
+  },
+  "author": "renan@aestesis.org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aestesis/aestesis.3.0/issues"
+  },
+  "homepage": "https://github.com/aestesis/aestesis.3.0#readme",
+  "dependencies": {
+    "three": "latest"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "latest",
+    "rollup": "latest",
+    "rollup-plugin-terser": "latest",
+    "rollup-plugin-livereload": "latest",
+    "rollup-plugin-serve": "2.0.1",
+    "serve": "latest"
+  }
+}
