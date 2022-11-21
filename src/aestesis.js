@@ -7,11 +7,11 @@ import { FxMarching } from './effects/fx.marching';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class Aestesis {
     constructor({ width, height }) {
-        // this.fx = new FxZygo({ width: width, height: height });
+        this.fx = new FxZygo({ width: width, height: height });
         // this.fx = new FxColorToy({ width: width, height: height });
-        //this.fx = new FxBayerToy({ width: width, height: height });
+        // this.fx = new FxBayerToy({ width: width, height: height });
         //this.fx = new FxCubeToy({ width: width, height: height });
-        this.fx = new FxMarching({ width: width, height: height });
+        //this.fx = new FxMarching({ width: width, height: height });
     }
     render(renderer) {
         this.fx.render(renderer);

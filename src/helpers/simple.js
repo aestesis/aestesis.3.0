@@ -21,18 +21,26 @@ import {
 } from 'three';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-export const simpleVertexShader = `precision highp float;
-attribute vec2 position;
+export const simpleVertexShader = `#version 300 es
+precision highp float;
+
+in vec2 position;
+
 void main() {
   gl_Position = vec4(position, 1.0, 1.0);
 }`;
 //////////////////////////////////////////////////////////////////////////////////////////////////
-const textureFragmentShader = `precision highp float;
-uniform sampler2D texture;
+const textureFragmentShader = `#version 300 es
+precision highp float;
+
+out vec4 fragColor;
+
+uniform sampler2D sampler;
 uniform vec2 resolution;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / resolution.xy;
-  gl_FragColor = vec4(texture2D(texture, uv).rgb, 1.0);
+  fragColor = vec4(texture(sampler, uv).rgb, 1.0);
 }`;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,17 +89,17 @@ export class SimpleCopy {
             fragmentShader: textureFragmentShader,
             vertexShader: simpleVertexShader,
             uniforms: {
-                texture: { value: texture },
+                sampler: { value: texture },
                 resolution: { value: this.resolution },
             },
         });
         this.simple = new Simple({ material: this.material });
     }
     get texture() {
-        return this.material.uniforms.texture.value;
+        return this.material.uniforms.sampler.value;
     }
     set texture(t) {
-        this.material.uniforms.texture.value = t;
+        this.material.uniforms.sampler.value = t;
     }
     render(renderer) {
         renderer.getDrawingBufferSize(this.resolution);
@@ -101,9 +109,9 @@ export class SimpleCopy {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class SimpleTexture {
-    constructor({ href }) {
+    constructor({ asset }) {
         const loader = new TextureLoader();
-        const texture = this.texture = loader.load(href);
+        const texture = this.texture = loader.load(asset);
         texture.minFilter = NearestFilter;
         texture.magFilter = NearestFilter;
         texture.wrapS = RepeatWrapping;
@@ -113,9 +121,9 @@ export class SimpleTexture {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class JpegCubeMap {
-    constructor({ href }) {
+    constructor({ asset }) {
         this.texture = new CubeTextureLoader()
-            .setPath(href)
+            .setPath(asset)
             .load([
                 'px.jpg',
                 'nx.jpg',
@@ -127,9 +135,9 @@ export class JpegCubeMap {
     }
 }
 export class PngCubeMap {
-    constructor({ href }) {
+    constructor({ asset }) {
         this.texture = new CubeTextureLoader()
-            .setPath(href)
+            .setPath(asset)
             .load([
                 'px.png',
                 'nx.png',

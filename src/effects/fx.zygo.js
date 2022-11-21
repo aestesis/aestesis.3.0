@@ -21,38 +21,37 @@ import {
     SimpleCopy,
     simpleVertexShader
 } from '../helpers/simple';
+import FxToy from './fx.toy';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-const fx = `#version 300 es
-precision mediump float;
-uniform vec2 resolution;
+const fxZygo = `#version 300 es
+precision highp float;
+
 out vec4 fragColor;
+
+uniform vec3 iResolution;
+uniform float iTime;
+ 
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    float ts = sin(iTime*0.1156154)*5.0+12.0;
+    vec2 uv = fragCoord/iResolution.xy;
+    vec4 z0 = 0.5 + 0.5*cos(iTime+uv.xyxy+vec4(0,5,17,23));
+    vec4 z1 = 0.5 + 0.5*cos(iTime+uv.xyxy+vec4(1,3,7,11));
+    float v0 = sin(distance(z0.xy,uv)*ts)+sin(distance(z0.zw,uv)*ts)*0.5+0.5;
+    float v1 = sin(distance(z1.xy,uv)*ts)+sin(distance(z1.zw,uv)*ts)+1.0;
+    fragColor = vec4(v0,v1,0.5,1);
+}
+ 
 void main() {
-  vec2 uv = gl_FragCoord.xy / resolution.xy;
-  fragColor = vec4(uv, 1.0, 1.0);
-}`;
+  mainImage(fragColor, gl_FragCoord.xy);
+}
+`;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-export class FxZygo {
-    // TODO: setup all shader in glsl 3.0
+export class FxZygo extends FxToy {
     constructor({ width, height }) {
-        this.material = new RawShaderMaterial({
-            fragmentShader: fx,
-            vertexShader: simpleVertexShader,
-            uniforms: {
-                time: { value: 0 },
-                resolution: { value: new Vector2(width, height) }
-            }
-        });
-        this.target = new SimpleRenderTarget({
-            material: this.material, width: width, height: height
-        });
-        this.fill = new SimpleCopy({ texture: this.target.texture });
-    }
-    render(renderer) {
-        this.material.uniforms.time.value = Date.now() / 1000;
-        this.target.render(renderer);
-        this.fill.render(renderer);
+        super({ width: width, height: height, fragmentShader: fxZygo });
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////

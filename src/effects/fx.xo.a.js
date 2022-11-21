@@ -1,11 +1,14 @@
 import { FxToy } from './fx.toy';
 import { SimpleTexture, JpegCubeMap } from '../helpers/simple';
+import { Vector4 } from 'three';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-const fxColorToy = `precision highp float;
-//#include <common>
- 
+const fxColorToy = `#version 300 es
+precision highp float;
+
+out vec4 fragColor;
+
 uniform vec3 iResolution;
 uniform float iTime;
  
@@ -16,7 +19,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 }
  
 void main() {
-  mainImage(gl_FragColor, gl_FragCoord.xy);
+  mainImage(fragColor, gl_FragCoord.xy);
 }
 `;
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +32,11 @@ export class FxColorToy extends FxToy {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // from https://r105.threejsfundamentals.org/threejs/lessons/threejs-shadertoy.html
-const fxBayerToy = `precision highp float;
+const fxBayerToy = `#version 300 es
+precision highp float;
+
+out vec4 fragColor;
+
 uniform vec3 iResolution;
 uniform float iTime;
 uniform sampler2D iChannel0;
@@ -43,7 +50,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 uv = fragCoord.xy / iResolution.xy;
     uv.x *= iResolution.x / iResolution.y;
 
-    vec4 noise = texture2D(iChannel0, floor(uv * float(TILES)) / float(TILES));
+    vec4 noise = texture(iChannel0, floor(uv * float(TILES)) / float(TILES));
     float p = 1.0 - mod(noise.r + noise.g + noise.b + iTime * float(TIMESCALE), 1.0);
     p = min(max(p * 3.0 - 1.8, 0.1), 2.0);
 
@@ -53,20 +60,33 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     fragColor = vec4(COLOR, 1.0) * p;
 } 
-void main() {
-  mainImage(gl_FragColor, gl_FragCoord.xy);
+void main() { 
+  mainImage(fragColor, gl_FragCoord.xy);
 }
 `;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class FxBayerToy extends FxToy {
     constructor({ width, height }) {
-        super({ width: width, height: height, fragmentShader: fxBayerToy, iChannel0: new SimpleTexture({ href: 'app/assets/texture/bayer.png' }).texture });
+        super({
+            width: width,
+            height: height,
+            fragmentShader: fxBayerToy,
+            uniforms: {
+                iChannel0: {
+                    value: new SimpleTexture({ asset: 'app/assets/texture/bayer.png' }).texture
+                }
+            }
+        });
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-const fxCubeToy = `precision highp float;
+const fxCubeToy = `#version 300 es
+precision highp float;
 // from https://www.shadertoy.com/view/XsB3Rm
+
+out vec4 fragColor;
+
 uniform vec3 iResolution;
 uniform float iTime;
 uniform vec4 iMouse;
@@ -202,7 +222,7 @@ vec3 shading( vec3 v, vec3 n, vec3 dir, vec3 eye ) {
 		final += light_color * mix( diffuse, specular, F );
 	}
 
-    final += textureCube( iChannel0, ref ).rgb * fresnel( Ks, n, -dir );
+    final += texture( iChannel0, ref ).rgb * fresnel( Ks, n, -dir );
     
 	return final;
 }
@@ -299,7 +319,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     float depth = clip_far;
     vec3 n = vec3( 0.0 );
 	if ( !ray_marching( eye, dir, depth, n ) ) {
-		fragColor = textureCube( iChannel0, dir );
+		fragColor = texture( iChannel0, dir );
         return;
 	}
 	
@@ -311,13 +331,25 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 }
 
 void main() {
-    mainImage(gl_FragColor, gl_FragCoord.xy);
+    mainImage(fragColor, gl_FragCoord.xy);
 }
 `;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class FxCubeToy extends FxToy {
     constructor({ width, height }) {
-        super({ width: width, height: height, fragmentShader: fxCubeToy, iChannel0: new JpegCubeMap({ href: 'app/assets/cubemap/yokohama/' }).texture });
+        super({
+            width: width,
+            height: height,
+            fragmentShader: fxCubeToy,
+            uniforms: {
+                iMouse: { value: new Vector4() },
+                iChannel0: { value: new JpegCubeMap({ asset: 'app/assets/cubemap/yokohama/' }).texture }
+            }
+        });
+
+    }
+    render(renderer) {
+        super.render(renderer);
     }
 }
 

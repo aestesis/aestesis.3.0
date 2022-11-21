@@ -32,7 +32,7 @@ precision highp float;
 // and
 //    https://iquilezles.org/articles/distfunctions
 
-#define HW_PERFORMANCE 0
+#define HW_PERFORMANCE 1
 
 uniform vec3 iResolution;
 uniform float iTime;

@@ -42,17 +42,17 @@ export class FxToy {
     // Input - TimeDelta   : https://www.shadertoy.com/view/lsKGWV
     // Inout - 3D Texture  : https://www.shadertoy.com/view/4llcR4
 
-    constructor({ width, height, fragmentShader, iChannel0, iChannel1, iChannel2, iChannel3 }) {
+    constructor({ width, height, fragmentShader, uniforms }) {
+        this.width = width;
+        this.height = height;
+        uniforms = uniforms || {};
         this.material = new RawShaderMaterial({
             fragmentShader: fragmentShader,
             vertexShader: simpleVertexShader,
             uniforms: {
                 iTime: { value: 0 },
                 iResolution: { value: new Vector3(width, height, 0) },
-                ...iChannel0 ? { iChannel0: iChannel0 } : {},
-                ...iChannel1 ? { iChannel0: iChannel1 } : {},
-                ...iChannel2 ? { iChannel0: iChannel2 } : {},
-                ...iChannel3 ? { iChannel0: iChannel3 } : {},
+                ...uniforms
             }
         });
         this.target = new SimpleRenderTarget({
@@ -60,17 +60,54 @@ export class FxToy {
         });
         this.fill = new SimpleCopy({ texture: this.target.texture });
         this.startTime = Date.now();
+        if (uniforms.iMouse) {
+            this.mouse = {
+                random: new FxRandom({ length: 8, transform: (v) => (v * 0.4 + 0.8) * 0.1 })
+            };
+        }
     }
     render(renderer) {
         this.material.uniforms.iTime.value = (Date.now() - this.startTime) / 1000;
+        if (this.material.uniforms.iMouse) {
+            this.iMouseAnimate();
+        }
         this.target.render(renderer);
         this.fill.render(renderer);
+    }
+    get time() {
+        return this.material.uniforms.iTime.value;
+    }
+    iMouseAnimate() {
+        const rnd = this.mouse.random.n;
+        const time = this.time;
+        const mw = this.width * 0.5;
+        const mh = this.height * 0.5;
+        this.material.uniforms.iMouse.value.x = (Math.sin(time * rnd[0]) + Math.sin(time * rnd[1])) * mw + mw;
+        this.material.uniforms.iMouse.value.y = (Math.sin(time * rnd[2]) + Math.sin(time * rnd[3])) * mh + mh;
+        this.material.uniforms.iMouse.value.z = (Math.sin(time * rnd[4]) + Math.sin(time * rnd[5])) * mw + mw;
+        this.material.uniforms.iMouse.value.w = (Math.sin(time * rnd[6]) + Math.sin(time * rnd[7])) * mh + mh;
     }
     static from({ element, width, height }) {
         if (typeof element == 'string') {
             element = document.getElementById(element);
         }
         return new FxToy({ width: width, height: height, fragmentShader: element.textContent });
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+export class FxRandom {
+    constructor({ length, transform }) {
+        this.n = [];
+        if (transform) {
+            for (let i = 0; i < length; i++) {
+                this.n.push(transform(Math.random()));
+            }
+        } else {
+            for (let i = 0; i < length; i++) {
+                this.n.push(Math.random());
+            }
+        }
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
