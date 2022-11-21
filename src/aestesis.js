@@ -3,6 +3,7 @@
 import { FxZygo } from './effects/fx.zygo';
 import { FxBayerToy, FxColorToy, FxCubeToy } from './effects/fx.xo.a';
 import { FxMarching } from './effects/fx.marching';
+import { SimpleCopy } from './helpers/simple';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class Aestesis {
@@ -12,9 +13,11 @@ export class Aestesis {
         // this.fx = new FxBayerToy({ width: width, height: height });
         //this.fx = new FxCubeToy({ width: width, height: height });
         //this.fx = new FxMarching({ width: width, height: height });
+        this.fill = new SimpleCopy({ texture: this.fx.texture });
     }
     render(renderer) {
         this.fx.render(renderer);
+        this.fill.render(renderer);
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////

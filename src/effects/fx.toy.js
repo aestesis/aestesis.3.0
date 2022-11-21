@@ -58,7 +58,6 @@ export class FxToy {
         this.target = new SimpleRenderTarget({
             material: this.material, width: width, height: height
         });
-        this.fill = new SimpleCopy({ texture: this.target.texture });
         this.startTime = Date.now();
         if (uniforms.iMouse) {
             this.mouse = {
@@ -72,7 +71,9 @@ export class FxToy {
             this.iMouseAnimate();
         }
         this.target.render(renderer);
-        this.fill.render(renderer);
+    }
+    get texture() {
+        return this.target.texture;
     }
     get time() {
         return this.material.uniforms.iTime.value;
