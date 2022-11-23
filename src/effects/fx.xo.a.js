@@ -73,7 +73,7 @@ export class FxBayerToy extends FxToy {
             fragmentShader: fxBayerToy,
             uniforms: {
                 iChannel0: {
-                    value: new SimpleTexture({ asset: 'app/assets/texture/bayer.png' }).texture
+                    value: new SimpleTexture({ asset: 'assets/texture/bayer.png' }).texture
                 }
             }
         });
@@ -343,7 +343,7 @@ export class FxCubeToy extends FxToy {
             fragmentShader: fxCubeToy,
             uniforms: {
                 iMouse: { value: new Vector4() },
-                iChannel0: { value: new JpegCubeMap({ asset: 'app/assets/cubemap/yokohama/' }).texture }
+                iChannel0: { value: new JpegCubeMap({ asset: 'assets/cubemap/yokohama/' }).texture }
             }
         });
 

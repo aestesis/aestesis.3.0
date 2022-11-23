@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "serve": "serve",
+    "serve": "serve app",
     "build": "rollup -c -w src"
   },
   "repository": {
@@ -23,9 +23,9 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "latest",
     "rollup": "latest",
-    "rollup-plugin-terser": "latest",
     "rollup-plugin-livereload": "latest",
     "rollup-plugin-serve": "2.0.1",
+    "rollup-plugin-terser": "latest",
     "serve": "latest"
   }
 }
