@@ -1,18 +1,19 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-import { FxZygo } from './effects/fx.zygo';
+import { FxZygo } from './effects/fx.ae.zygo';
 import { FxBayerToy, FxColorToy, FxCubeToy } from './effects/fx.xo.a';
 import { FxMarching } from './effects/fx.marching';
-import { SimpleCopy } from './helpers/simple';
+import { SimpleCopy } from './toy/simple';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class Aestesis {
     constructor({ width, height }) {
         this.fx = new FxZygo({ width: width, height: height });
-        // this.fx = new FxColorToy({ width: width, height: height });
-        // this.fx = new FxBayerToy({ width: width, height: height });
+        //this.fx = new FxColorToy({ width: width, height: height });
+        //this.fx = new FxBayerToy({ width: width, height: height });
         //this.fx = new FxCubeToy({ width: width, height: height });
         //this.fx = new FxMarching({ width: width, height: height });
+
         this.fill = new SimpleCopy({ texture: this.fx.texture });
     }
     render(renderer) {

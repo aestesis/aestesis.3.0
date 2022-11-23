@@ -1,6 +1,5 @@
-import { FxToy } from './fx.toy';
-import { SimpleTexture, JpegCubeMap } from '../helpers/simple';
-import { Vector4 } from 'three';
+import { FxToy, FxMouse } from '../toy/toy';
+import { SimpleCubeMap, SimpleTexture } from '../toy/simple';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -342,9 +341,9 @@ export class FxCubeToy extends FxToy {
             height: height,
             fragmentShader: fxCubeToy,
             uniforms: {
-                iMouse: { value: new Vector4() },
-                iChannel0: { value: new JpegCubeMap({ asset: 'assets/cubemap/yokohama/' }).texture }
-            }
+                iChannel0: { value: new SimpleCubeMap({ asset: 'assets/cubemap/yokohama/' }).texture }
+            },
+            tools: [new FxMouse()]
         });
 
     }

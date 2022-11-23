@@ -1,5 +1,4 @@
-import { FxToy } from './fx.toy';
-import { SimpleTexture } from '../helpers/simple';
+import FxToy from "../toy/toy";
 
 // https://github.com/gam0022/webgl/blob/master/raymarching_reflect.html
 // https://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/

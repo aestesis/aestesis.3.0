@@ -120,31 +120,17 @@ export class SimpleTexture {
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-export class JpegCubeMap {
-    constructor({ asset }) {
+export class SimpleCubeMap {
+    constructor({ asset, ext = 'jpg' }) {
         this.texture = new CubeTextureLoader()
             .setPath(asset)
             .load([
-                'px.jpg',
-                'nx.jpg',
-                'py.jpg',
-                'ny.jpg',
-                'pz.jpg',
-                'nz.jpg'
-            ]);
-    }
-}
-export class PngCubeMap {
-    constructor({ asset }) {
-        this.texture = new CubeTextureLoader()
-            .setPath(asset)
-            .load([
-                'px.png',
-                'nx.png',
-                'py.png',
-                'ny.png',
-                'pz.png',
-                'nz.png'
+                `px.${ext}`,
+                `nx.${ext}`,
+                `py.${ext}`,
+                `ny.${ext}`,
+                `pz.${ext}`,
+                `nz.${ext}`
             ]);
     }
 }

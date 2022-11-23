@@ -15,6 +15,7 @@ import {
     RawShaderMaterial,
     Vector2,
     Vector3,
+    Vector4,
 } from 'three';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 import {
@@ -22,12 +23,10 @@ import {
     SimpleCopy,
     simpleVertexShader,
     SimpleTexture
-} from '../helpers/simple';
+} from './simple';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class FxToy {
-    // Shows how to use the mouse input (only left button supported):
-    //
     //      iMouse.xy  = mouse position during last button down
     //  abs(iMouse.zw) = mouse position during last button click
     // sign(iMouse.z)  = button is down
@@ -42,10 +41,22 @@ export class FxToy {
     // Input - TimeDelta   : https://www.shadertoy.com/view/lsKGWV
     // Inout - 3D Texture  : https://www.shadertoy.com/view/4llcR4
 
-    constructor({ width, height, fragmentShader, uniforms }) {
+    constructor({ width, height, fragmentShader, uniforms, tools }) {
         this.width = width;
         this.height = height;
+        this.tools = [];
         uniforms = uniforms || {};
+        if (tools) {
+            if (Array.isArray(tools)) {
+                for (const t of tools) {
+                    uniforms = { ...(t.uniforms || {}), ...uniforms };
+                }
+                this.tools = tools;
+            } else {
+                uniforms = { ...(tools.uniforms || {}), ...uniforms };
+                this.tools = [tools];
+            }
+        }
         this.material = new RawShaderMaterial({
             fragmentShader: fragmentShader,
             vertexShader: simpleVertexShader,
@@ -59,16 +70,11 @@ export class FxToy {
             material: this.material, width: width, height: height
         });
         this.startTime = Date.now();
-        if (uniforms.iMouse) {
-            this.mouse = {
-                random: new FxRandom({ length: 8, transform: (v) => (v * 0.4 + 0.8) * 0.1 })
-            };
-        }
     }
     render(renderer) {
         this.material.uniforms.iTime.value = (Date.now() - this.startTime) / 1000;
-        if (this.material.uniforms.iMouse) {
-            this.iMouseAnimate();
+        for (const t of this.tools) {
+            t.animate(this);
         }
         this.target.render(renderer);
     }
@@ -78,21 +84,43 @@ export class FxToy {
     get time() {
         return this.material.uniforms.iTime.value;
     }
-    iMouseAnimate() {
-        const rnd = this.mouse.random.n;
-        const time = this.time;
-        const mw = this.width * 0.5;
-        const mh = this.height * 0.5;
-        this.material.uniforms.iMouse.value.x = (Math.sin(time * rnd[0]) + Math.sin(time * rnd[1])) * mw + mw;
-        this.material.uniforms.iMouse.value.y = (Math.sin(time * rnd[2]) + Math.sin(time * rnd[3])) * mh + mh;
-        this.material.uniforms.iMouse.value.z = (Math.sin(time * rnd[4]) + Math.sin(time * rnd[5])) * mw + mw;
-        this.material.uniforms.iMouse.value.w = (Math.sin(time * rnd[6]) + Math.sin(time * rnd[7])) * mh + mh;
-    }
     static from({ element, width, height }) {
         if (typeof element == 'string') {
             element = document.getElementById(element);
         }
         return new FxToy({ width: width, height: height, fragmentShader: element.textContent });
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+export class FxTool {
+    get uniforms() {
+        return {};
+    }
+    animate(toy) { }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////
+export class FxMouse extends FxTool {
+    constructor() {
+        super();
+        this.random = new FxRandom({ length: 8, transform: (v) => (v * 0.4 + 0.8) * 0.1 });
+    }
+    get uniforms() {
+        return {
+            iMouse: {
+                value: new Vector4()
+            }
+        };
+    }
+    animate(toy) {
+        const rnd = this.random.n;
+        const time = toy.time;
+        const mw = toy.width * 0.5;
+        const mh = toy.height * 0.5;
+        toy.material.uniforms.iMouse.value.x = (Math.sin(time * rnd[0]) + Math.sin(time * rnd[1])) * mw + mw;
+        toy.material.uniforms.iMouse.value.y = (Math.sin(time * rnd[2]) + Math.sin(time * rnd[3])) * mh + mh;
+        toy.material.uniforms.iMouse.value.z = (Math.sin(time * rnd[4]) + Math.sin(time * rnd[5])) * mw + mw;
+        toy.material.uniforms.iMouse.value.w = (Math.sin(time * rnd[6]) + Math.sin(time * rnd[7])) * mh + mh;
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
