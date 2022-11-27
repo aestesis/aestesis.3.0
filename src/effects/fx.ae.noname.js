@@ -41,7 +41,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     float at = a + sin(d-iTime)*(3.1455451+ts*(sin(iTime*0.0145)*20.0+10.0));
     float dt = d + sin(a+iTime*sin(iTime*0.001778))*(ts*10.161);
     vec2 p = vec2(cos(dt)*at,sin(dt)*at)*0.5+0.5;
-    fragColor = (0.5 + 0.5*cos(iTime+p.xyxy*vec4(1,3,5,7)))*vec4(1.0,0.8,0.5,1);}
+    fragColor = (0.5 + 0.5*cos(iTime+p.xyxy*vec4(1,3,5,7)))*vec4(1.0,0.3,0.8,1);
+}
  
 void main() {
   mainImage(fragColor, gl_FragCoord.xy);
