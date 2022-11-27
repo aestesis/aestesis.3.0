@@ -24,7 +24,7 @@ import {
 import { FxToy } from '../toy/toy';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-const fxZygoNoName = `#version 300 es
+const fxNoName = `#version 300 es
 precision highp float;
 
 out vec4 fragColor;
@@ -38,12 +38,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 uv = fragCoord/iResolution.xy;
     float a = abs(atan(uv.y-0.5,uv.x-0.5)/(3.1415*2.0))*2.0;
     float d = distance(uv.xy,vec2(0.5,0.5));
-    a = a + sin(d+ts)*ts;
-    d = d + sin(a+ts)*51.0 * ts;
-    vec2 p = vec2(cos(d)*a,sin(d)*a)-uv.xy;
-    fragColor = (0.5 + 0.5*cos(iTime+p.xyxy*vec4(1,3,5,7)))*vec4(1.0,0.8,0.5,1);
-
-}
+    float at = a + sin(d-iTime)*(3.1455451+ts*(sin(iTime*0.0145)*20.0+10.0));
+    float dt = d + sin(a+iTime*sin(iTime*0.001778))*(ts*10.161);
+    vec2 p = vec2(cos(dt)*at,sin(dt)*at)*0.5+0.5;
+    fragColor = (0.5 + 0.5*cos(iTime+p.xyxy*vec4(1,3,5,7)))*vec4(1.0,0.8,0.5,1);}
  
 void main() {
   mainImage(fragColor, gl_FragCoord.xy);
@@ -53,7 +51,7 @@ void main() {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class FxNoName extends FxToy {
     constructor({ width, height }) {
-        super({ width: width, height: height, fragmentShader: fxZygoNoName });
+        super({ width: width, height: height, fragmentShader: fxNoName });
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
