@@ -9,8 +9,8 @@ import { SimpleCopy } from './toy/simple';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 export class Aestesis {
     constructor({ width, height }) {
-        this.fx = new FxZygo({ width: width, height: height });
-        //this.fx = new FxNoName({ width: width, height: height });
+        //this.fx = new FxZygo({ width: width, height: height });
+        this.fx = new FxNoName({ width: width, height: height });
 
 
         //this.fx = new FxColorToy({ width: width, height: height });

@@ -22,10 +22,10 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "latest",
+    "@rollup/plugin-terser": "latest",
     "rollup": "latest",
     "rollup-plugin-livereload": "latest",
     "rollup-plugin-serve": "2.0.1",
-    "rollup-plugin-terser": "latest",
     "serve": "latest"
   }
 }
